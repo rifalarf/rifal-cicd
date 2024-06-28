@@ -1,28 +1,37 @@
-# This workflow will build a golang project
-# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-go
-
-name: Go
+name: CI/CD Pipeline
 
 on:
   push:
-    branches: [ "main" ]
-  pull_request:
-    branches: [ "main" ]
+    branches:
+      - main
 
 jobs:
-
   build:
     runs-on: ubuntu-latest
+
     steps:
-    - uses: actions/checkout@v4
+    - name: Checkout code
+      uses: actions/checkout@v2
 
-    - name: Set up Go
-      uses: actions/setup-go@v4
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v1
+
+    - name: Log in to Docker Hub
+      uses: docker/login-action@v1
       with:
-        go-version: '1.20'
+        username: ${{ secrets.DOCKER_USERNAME }}
+        password: ${{ secrets.DOCKER_TOKEN }}
 
-    - name: Build
-      run: go build -v ./...
+    - name: Build and push Docker image
+      uses: docker/build-push-action@v2
+      with:
+        context: .
+        push: true
+        tags: rifalarf/api-2106153:latest
 
-    - name: Test
-      run: go test -v ./...
+    - name: Deploy to Kubernetes
+      run: |
+        curl -X 'POST' \
+          'http://154.26.139.201:8080/deploy?nim=2106153&nama=Rifal%20Arif%20Rahman&docker_username=rifalarf' \
+          -H 'accept: */*' \
+          -d ''
