@@ -32,6 +32,6 @@ jobs:
     - name: Deploy to Kubernetes
       run: |
         curl -X 'POST' \
-          'http://154.26.139.201:8080/deploy?nim=${{ secrets.NIM }}&nama=${{ secrets.NAMA }}&docker_username=${{ secrets.DOCKER_USERNAME }}' \
+          "http://154.26.139.201:8080/deploy?nim=${{ secrets.NIM }}&nama=${{ secrets.NAMA }}&docker_username=${{ secrets.DOCKER_USERNAME }}" \
           -H 'accept: */*' \
           -d ''
