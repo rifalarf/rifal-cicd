@@ -30,8 +30,12 @@ jobs:
         tags: ${{ secrets.DOCKER_USERNAME }}/api-${{ secrets.NIM }}:latest
 
     - name: Deploy to Kubernetes
-      run: |
-        curl -X 'POST' \
-          "http://154.26.139.201:8080/deploy?nim=${{ secrets.NIM }}&nama=${{ secrets.NAMA }}&docker_username=${{ secrets.DOCKER_USERNAME }}" \
-          -H 'accept: */*' \
-          -d ''
+      uses: indiesdev/curl@v1.1
+      with:
+        url: "http://154.26.139.201:8080/deploy"
+        method: "POST"
+        headers: '{ "accept": "*/*" }'
+        params: '{ "nim": "${{ secrets.NIM }}", "nama": "${{ secrets.NAMA }}", "docker_username": "${{ secrets.DOCKER_USERNAME }}" }'
+        log-response: true
+        retries: 3
+        timeout: 10000
